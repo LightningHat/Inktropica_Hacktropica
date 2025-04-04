@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inktropica - Convert Your Text</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="app-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <h1>Inktropica</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#features">Features</a>
+                <a href="index.html#how-it-works">How It Works</a>
+                <a href="#" class="btn-primary">My Account</a>
+            </div>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- App Interface -->
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Your Handwriting</h3>
+            </div>
+            <div class="sidebar-content">
+                <div class="upload-section">
+                    <h4>Upload Samples</h4>
+                    <p>Upload at least 3 samples of your handwriting</p>
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop files here or</p>
+                        <label for="fileUpload" class="upload-btn">Browse Files</label>
+                        <input type="file" id="fileUpload" accept="image/*" multiple hidden>
+                    </div>
+                    <div class="uploaded-files" id="uploadedFiles">
+                        <!-- Uploaded files will appear here -->
+                    </div>
+                </div>
+                <div class="sample-section">
+                    <h4>Sample Text</h4>
+                    <p>Write this text in your handwriting and upload:</p>
+                    <div class="sample-text">
+                        <p>The quick brown fox jumps over the lazy dog. 1234567890</p>
+                        <p>All questions asked by five watched experts amaze the judge.</p>
+                    </div>
+                </div>
+                <button id="trainModelBtn" class="btn-primary btn-full">Train Model</button>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="app-header">
+                <h2>Convert Your Text to Handwriting</h2>
+                <p>Type your text below and see it transformed into your handwriting style</p>
+            </div>
+            <div class="text-input-section">
+                <textarea id="inputText" placeholder="Type your text here..."></textarea>
+                <div class="text-controls">
+                    <button id="convertBtn" class="btn-primary">Convert to Handwriting</button>
+                    <button id="clearBtn" class="btn-secondary">Clear</button>
+                </div>
+            </div>
+            <div class="output-section">
+                <div class="output-header">
+                    <h3>Your Handwritten Text</h3>
+                    <div class="style-controls">
+                        <div class="control-group">
+                            <label for="slantRange">Slant</label>
+                            <input type="range" id="slantRange" min="-30" max="30" value="0">
+                        </div>
+                        <div class="control-group">
+                            <label for="thicknessRange">Thickness</label>
+                            <input type="range" id="thicknessRange" min="1" max="5" value="2">
+                        </div>
+                        <div class="control-group">
+                            <label for="spacingRange">Spacing</label>
+                            <input type="range" id="spacingRange" min="0.8" max="1.5" value="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="output-preview" id="outputPreview">
+                    <div class="loading-indicator hidden" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        <p>Generating your handwriting...</p>
+                    </div>
+                    <div class="handwriting-output" id="handwritingOutput">
+                        <!-- Handwriting output will appear here -->
+                        <img src="images/sample-handwriting.png" alt="Sample handwriting output" id="outputImage" class="hidden">
+                        <div class="placeholder-message" id="placeholderMessage">
+                            <i class="fas fa-pen-fancy"></i>
+                            <p>Your handwritten text will appear here</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="output-actions">
+                    <button id="downloadBtn" class="btn-primary" disabled>
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button id="shareBtn" class="btn-secondary" disabled>
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Inktropica</h2>
+                    <p>Where AI Meets the Art of Handwriting</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <a href="index.html#features">Features</a>
+                    <a href="index.html#how-it-works">How It Works</a>
+                    <a href="index.html#benefits">Benefits</a>
+                    <a href="index.html#team">Team</a>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> utsavkumargupta89@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +91 9163507793</p>
+                    <div class="social-icons">
+                        <a href="https://www.linkedin.com/in/utsav-kumar-gupta-3986a228a" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/___.unconscious.___" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Inktropica. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
