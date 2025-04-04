@@ -7,6 +7,7 @@ import Features from "./components/Features";
 import Contact from "./components/Contact";
 import Dashboard from "./components/Dashboard";
 import ClerkAuth from "./components/ClerkAuth";
+import HandwritingApp from "./components/HandwritingApp";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/features" element={<Features />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<ClerkAuth />} />
+        <Route path="/try-now" element={<HandwritingApp />} />
 
         {/* Protect Dashboard Route */}
         <Route
