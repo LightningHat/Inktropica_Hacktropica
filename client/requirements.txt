@@ -1,0 +1,14 @@
+# requirements.txt for Combined Gemini + Vertex AI Workflow
+
+# Standard Gemini API Client Library
+google-generativeai
+
+# Google Cloud Client Library for Vertex AI (includes core, aiplatform)
+google-cloud-aiplatform
+
+# Image handling library (used for loading input and potentially viewing output)
+Pillow
+
+# Optional but often implicitly used or helpful
+# numpy
+# matplotlib
