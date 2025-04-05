@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import Dropzone from "react-dropzone";
 
 const HandwritingApp = () => {
+  const canvasRef = useRef(null);
+  const [drawing, setDrawing] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -9,23 +12,64 @@ const HandwritingApp = () => {
   const [thickness, setThickness] = useState(2);
   const [spacing, setSpacing] = useState(1);
 
-  const handleFileUpload = (files) => {
-    const validFiles = Array.from(files).filter((file) =>
-      file.type.match("image.*")
+  // Drawing on Canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+
+    const startDrawing = ({ nativeEvent }) => {
+      const { offsetX, offsetY } = nativeEvent;
+      ctx.beginPath();
+      ctx.moveTo(offsetX, offsetY);
+      setDrawing(true);
+    };
+
+    const draw = ({ nativeEvent }) => {
+      if (!drawing) return;
+      const { offsetX, offsetY } = nativeEvent;
+      ctx.lineTo(offsetX, offsetY);
+      ctx.stroke();
+    };
+
+    const stopDrawing = () => {
+      ctx.closePath();
+      setDrawing(false);
+    };
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseleave", stopDrawing);
+
+    return () => {
+      canvas.removeEventListener("mousedown", startDrawing);
+      canvas.removeEventListener("mousemove", draw);
+      canvas.removeEventListener("mouseup", stopDrawing);
+      canvas.removeEventListener("mouseleave", stopDrawing);
+    };
+  }, [drawing]);
+
+  const handleDrop = (acceptedFiles) => {
+    const imageFiles = acceptedFiles.filter((file) =>
+      file.type.startsWith("image/")
     );
-    if (validFiles.length !== files.length) {
-      alert("Please upload image files only.");
+    if (imageFiles.length < acceptedFiles.length) {
+      alert("Only image files are allowed.");
     }
-    setUploadedFiles((prevFiles) => [...prevFiles, ...validFiles]);
+    setUploadedFiles((prev) => [...prev, ...imageFiles]);
   };
 
-  const handleFileRemove = (index) => {
-    setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  const handleClearCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   const handleTrainModel = () => {
-    if (uploadedFiles.length < 3) {
-      alert("Please upload at least 3 handwriting samples.");
+    if (uploadedFiles.length < 1) {
+      alert("Please upload at least 1 image sample.");
       return;
     }
     alert("Model training started...");
@@ -51,62 +95,58 @@ const HandwritingApp = () => {
     setOutputImageVisible(false);
   };
 
-  const applyStyleAdjustments = () => {
-    const outputImage = document.getElementById("outputImage");
-    if (outputImage) {
-      outputImage.style.transform = `skewX(${slant}deg)`;
-      outputImage.style.filter = `contrast(${thickness})`;
-      outputImage.style.letterSpacing = `${spacing}px`;
-    }
-  };
-
   return (
     <div className="app-container flex flex-col md:flex-row">
       {/* Sidebar */}
       <div className="sidebar w-full md:w-1/4 bg-white border-r p-4">
         <h3 className="text-lg font-bold mb-4">Your Handwriting</h3>
-        <div className="upload-section mb-6">
-          <h4 className="font-semibold mb-2">Upload Samples</h4>
-          <p className="text-sm text-gray-500 mb-4">
-            Upload at least 3 samples of your handwriting.
-          </p>
-          <div
-            className="upload-area border-2 border-dashed p-4 text-center cursor-pointer"
-            onClick={() => document.getElementById("fileUpload").click()}
+
+        {/* Drawing Canvas */}
+        <div className="canvas-section mb-6">
+          <h4 className="font-semibold mb-2">Write a Paragraph (Canvas)</h4>
+          <canvas
+            ref={canvasRef}
+            width={300}
+            height={200}
+            className="border border-gray-400 rounded w-full"
+          ></canvas>
+          <button
+            className="mt-2 text-sm text-red-600 underline"
+            onClick={handleClearCanvas}
           >
-            <i className="fas fa-cloud-upload-alt text-indigo-600 text-2xl mb-2"></i>
-            <p>Drag & drop files here or</p>
-            <button className="upload-btn bg-indigo-600 text-white px-4 py-2 rounded">
-              Browse Files
-            </button>
-            <input
-              type="file"
-              id="fileUpload"
-              accept="image/*"
-              multiple
-              hidden
-              onChange={(e) => handleFileUpload(e.target.files)}
-            />
-          </div>
+            Clear Canvas
+          </button>
+        </div>
+
+        {/* Upload Image via Dropzone */}
+        <div className="upload-section mb-6">
+          <h4 className="font-semibold mb-2">Upload Handwritten Image</h4>
+          <Dropzone onDrop={handleDrop} accept={{ "image/*": [] }}>
+            {({ getRootProps, getInputProps }) => (
+              <div
+                {...getRootProps()}
+                className="upload-area border-2 border-dashed p-4 text-center cursor-pointer"
+              >
+                <input {...getInputProps()} />
+                <p>Drag & drop or click to upload images</p>
+              </div>
+            )}
+          </Dropzone>
           <div className="uploaded-files mt-4">
             {uploadedFiles.map((file, index) => (
               <div
                 key={index}
-                className="file-item flex items-center justify-between p-2 bg-gray-100 rounded mb-2"
+                className="file-item flex justify-between items-center bg-gray-100 p-2 rounded mb-2"
               >
-                <span className="file-name text-sm truncate">{file.name}</span>
-                <i
-                  className="fas fa-times text-red-500 cursor-pointer"
-                  onClick={() => handleFileRemove(index)}
-                ></i>
+                <span className="text-sm">{file.name}</span>
               </div>
             ))}
           </div>
         </div>
+
         <button
           className="btn-primary w-full bg-indigo-600 text-white px-4 py-2 rounded"
           onClick={handleTrainModel}
-          disabled={uploadedFiles.length < 3}
         >
           Train Model
         </button>
@@ -123,6 +163,7 @@ const HandwritingApp = () => {
             style.
           </p>
         </div>
+
         <div className="text-input-section mb-6">
           <textarea
             className="w-full border p-4 rounded mb-4"
@@ -146,11 +187,12 @@ const HandwritingApp = () => {
             </button>
           </div>
         </div>
+
         <div className="output-section bg-white p-6 rounded shadow">
           <div className="output-header flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold">Your Handwritten Text</h3>
             <div className="style-controls flex space-x-4">
-              <div className="control-group">
+              <div>
                 <label className="text-sm text-gray-500">Slant</label>
                 <input
                   type="range"
@@ -160,7 +202,7 @@ const HandwritingApp = () => {
                   onChange={(e) => setSlant(e.target.value)}
                 />
               </div>
-              <div className="control-group">
+              <div>
                 <label className="text-sm text-gray-500">Thickness</label>
                 <input
                   type="range"
@@ -170,12 +212,13 @@ const HandwritingApp = () => {
                   onChange={(e) => setThickness(e.target.value)}
                 />
               </div>
-              <div className="control-group">
+              <div>
                 <label className="text-sm text-gray-500">Spacing</label>
                 <input
                   type="range"
                   min="0.8"
                   max="1.5"
+                  step="0.1"
                   value={spacing}
                   onChange={(e) => setSpacing(e.target.value)}
                 />
@@ -184,9 +227,9 @@ const HandwritingApp = () => {
           </div>
           <div className="output-preview flex justify-center items-center h-64">
             {isLoading ? (
-              <div className="loading-indicator text-center">
+              <div className="text-center">
                 <div className="spinner border-4 border-indigo-600 border-t-transparent rounded-full w-12 h-12 animate-spin"></div>
-                <p className="text-gray-500 mt-2">Generating your handwriting...</p>
+                <p className="text-gray-500 mt-2">Generating handwriting...</p>
               </div>
             ) : outputImageVisible ? (
               <img
@@ -201,7 +244,7 @@ const HandwritingApp = () => {
                 }}
               />
             ) : (
-              <div className="placeholder-message text-center text-gray-500">
+              <div className="text-gray-500 text-center">
                 <i className="fas fa-pen-fancy text-4xl mb-2"></i>
                 <p>Your handwritten text will appear here.</p>
               </div>

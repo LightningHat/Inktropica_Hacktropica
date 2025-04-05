@@ -18,6 +18,7 @@ function Navbar() {
           {/* Show User Button when signed in */}
           <SignedIn>
             <Link to="/dashboard" className="hover:text-gray-200">Dashboard</Link>
+            <Link to="/handwriting-collection" className="hover:text-gray-200">Handwriting Collection</Link>
             <UserButton />
           </SignedIn>
 

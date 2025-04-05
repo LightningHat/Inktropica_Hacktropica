@@ -8,6 +8,7 @@ import Contact from "./components/Contact";
 import Dashboard from "./components/Dashboard";
 import ClerkAuth from "./components/ClerkAuth";
 import HandwritingApp from "./components/HandwritingApp";
+import HandwritingCollection from "./components/HandwritingCollection";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<ClerkAuth />} />
         <Route path="/try-now" element={<HandwritingApp />} />
+        <Route path="/handwriting-collection" element={<HandwritingCollection />} />
 
         {/* Protect Dashboard Route */}
         <Route
