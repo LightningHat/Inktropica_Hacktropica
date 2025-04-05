@@ -41,7 +41,7 @@ Perfect for:
 
 
 ---
-##💡 Future Enhancements
+## 💡 Future Enhancements
 - ✨ Multi-language handwriting support
 
 - 🧑‍🤝‍🧑 Community handwriting style sharing
@@ -52,8 +52,8 @@ Perfect for:
 
 - 📱 Mobile app version
 
-##🙌 Contribution
-We welcome contributions! Feel free to fork the repo, make changes, and submit pull requests.
+## 🙌 Contribution
+# We welcome contributions! Feel free to fork the repo, make changes, and submit pull requests.
 
 1.🍴 Fork the repository
 
